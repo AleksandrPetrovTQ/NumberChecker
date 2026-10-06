@@ -27,7 +27,7 @@ npm run verify:handler
 
 ## Deploy
 
-Vercel deploys the GitHub repo. `npm run build` bundles `src/check.ts` and `lib/` into one file, `api/check.js`, which is the function Vercel runs. That file is committed so the deploy does not depend on Vercel finding the `lib` TypeScript files. Set the environment variables from `.env.example` in the Vercel project before the first deploy. Leave the dashboard build command empty so `vercel.json` can run that bundle step again on deploy.
+Vercel deploys the GitHub repo with no build command and no output directory. `npm run build` bundles `src/check.ts` and `lib/` into `api/check.js`. Commit that file after changing the checker. Vercel runs `api/check.js` as the function. Set the environment variables from `.env.example` in the Vercel project before the first deploy. In the Vercel project settings, leave Build Command and Output Directory empty.
 
 The schedule is `.github/workflows/check.yml`. It needs the `CHECK_URL` and `CRON_SECRET` Actions secrets.
 

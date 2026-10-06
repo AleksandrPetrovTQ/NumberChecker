@@ -56,7 +56,7 @@ git push -u origin main
 1. Go to [vercel.com](https://vercel.com) and sign up or log in with GitHub. Approve access to the repository.
 2. Click **Add New…** → **Project**.
 3. Import the repository.
-4. Leave the framework preset as **Other**. Leave the build command and output directory empty. The repo's `vercel.json` bundles the checker into one function file during deploy.
+4. Leave the framework preset as **Other**. Leave the build command and output directory empty. Do not set the output directory to `public`. The repo already contains `api/check.js`, which is the function Vercel runs.
 5. Open **Environment Variables** and add these three before you deploy:
 
    | Name | Value |
@@ -137,6 +137,7 @@ This stays inside free limits for a personal project: Vercel Hobby, GitHub Free,
 | What you see | What to fix |
 | --- | --- |
 | A white page that says **This page is unavailable** and `FUNCTION_INVOCATION_FAILED` | The function crashed before it could answer. Redeploy from the latest `main`. Opening the site or `/api/check` in a browser is not the test. After a good deploy, `/api/check` in a browser shows `Method not allowed`, and the PowerShell command below is the test. |
+| `No Output Directory named "public"` | The project has no static site. In Vercel, open **Settings → Build and Deployment** and clear **Build Command** and **Output Directory**, then redeploy. |
 | Telegram never gets the test message, and the command prints `Unauthorized` | `CRON_SECRET` in the command does not match Vercel. Update it in the Vercel project (**Settings → Environment Variables**) and redeploy. |
 | The command prints `Service unavailable` | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, or `CRON_SECRET` is missing in Vercel. Add it and redeploy. |
 | The command prints `Too many requests` | Wait for the time in the `Retry-After` header. The limit is 10 checks per hour from one network. |
