@@ -1,0 +1,18 @@
+{
+  "name": "number-checker",
+  "private": true,
+  "type": "module",
+  "description": "Checks Vodafone Ukraine for one phone number and sends a Telegram message when it is listed.",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "verify:search": "node --experimental-strip-types scripts/verify-search.ts",
+    "verify:handler": "node --experimental-strip-types scripts/verify-handler.ts"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "typescript": "^5.8.3"
+  }
+}
