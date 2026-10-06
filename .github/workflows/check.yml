@@ -1,0 +1,76 @@
+name: Check number
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: number-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Restore last status
+        uses: actions/cache/restore@v4
+        with:
+          path: .number-status
+          key: number-status-${{ github.run_id }}
+          restore-keys: number-status-
+
+      - name: Ask Vercel to check the number
+        env:
+          CHECK_URL: ${{ secrets.CHECK_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          set -euo pipefail
+          if [ -z "${CHECK_URL}" ] || [ -z "${CRON_SECRET}" ]; then
+            echo "Add CHECK_URL and CRON_SECRET in GitHub Actions secrets."
+            exit 1
+          fi
+
+          previous="missing"
+          if [ -f .number-status/status.txt ]; then
+            previous="$(tr -d '[:space:]' < .number-status/status.txt)"
+          fi
+          if [ "${previous}" != "found" ] && [ "${previous}" != "missing" ]; then
+            previous="missing"
+          fi
+
+          tmp="$(mktemp)"
+          http_code="$(curl -sS -o "${tmp}" -w "%{http_code}" -X POST \
+            -H "Authorization: Bearer ${CRON_SECRET}" \
+            -H "x-previous-status: ${previous}" \
+            --max-time 40 \
+            "${CHECK_URL}")"
+
+          echo "HTTP ${http_code}"
+          if [ "${http_code}" != "200" ]; then
+            echo "Check failed. Status was not saved, so the next run will retry."
+            exit 1
+          fi
+
+          status="$(jq -r '.status' "${tmp}")"
+          notified="$(jq -r '.notified' "${tmp}")"
+          if [ "${status}" != "found" ] && [ "${status}" != "missing" ]; then
+            echo "Unexpected status."
+            exit 1
+          fi
+
+          mkdir -p .number-status
+          printf '%s' "${status}" > .number-status/status.txt
+          echo "Number status: ${status}. Telegram sent: ${notified}."
+
+      - name: Save status
+        if: success()
+        uses: actions/cache/save@v4
+        with:
+          path: .number-status
+          key: number-status-${{ github.run_id }}

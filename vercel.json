@@ -1,6 +1,7 @@
 {
+  "buildCommand": "npm run build",
   "functions": {
-    "api/check.ts": {
+    "api/check.js": {
       "maxDuration": 30
     }
   }

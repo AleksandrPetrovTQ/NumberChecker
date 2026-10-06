@@ -6,6 +6,10 @@ import { findTargetNumber, UpstreamError } from "../lib/vodafone.ts";
 
 export const maxDuration = 30;
 
+export function GET(): Response {
+  return json(405, { error: "Method not allowed" }, { allow: "POST" });
+}
+
 export async function POST(request: Request): Promise<Response> {
   const decision = consumeCheckRateLimit(hashIp(clientIp(request)));
   if (!decision.allowed) {

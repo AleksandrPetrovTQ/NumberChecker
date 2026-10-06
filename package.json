@@ -4,6 +4,7 @@
   "type": "module",
   "description": "Checks Vodafone Ukraine for one phone number and sends a Telegram message when it is listed.",
   "scripts": {
+    "build": "node scripts/bundle.mjs",
     "typecheck": "tsc --noEmit",
     "verify:search": "node --experimental-strip-types scripts/verify-search.ts",
     "verify:handler": "node --experimental-strip-types scripts/verify-handler.ts"
@@ -13,6 +14,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.15.3",
+    "esbuild": "^0.25.10",
     "typescript": "^5.8.3"
   }
 }

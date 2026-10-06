@@ -56,7 +56,7 @@ git push -u origin main
 1. Go to [vercel.com](https://vercel.com) and sign up or log in with GitHub. Approve access to the repository.
 2. Click **Add New…** → **Project**.
 3. Import the repository.
-4. Leave the framework preset as **Other**. There is no build command and no output directory.
+4. Leave the framework preset as **Other**. Leave the build command and output directory empty. The repo's `vercel.json` bundles the checker into one function file during deploy.
 5. Open **Environment Variables** and add these three before you deploy:
 
    | Name | Value |
@@ -72,7 +72,7 @@ git push -u origin main
 
    `https://number-checker-xxxx.vercel.app/api/check`
 
-The site root may show a 404. That is expected. Only `/api/check` is used.
+The site root may show a 404. That is expected. Only `/api/check` is used, and opening it in a browser shows `Method not allowed`. The check itself is a POST, from the test command below or from GitHub Actions.
 
 ## 5. Let GitHub call Vercel every 30 minutes
 
@@ -136,6 +136,7 @@ This stays inside free limits for a personal project: Vercel Hobby, GitHub Free,
 
 | What you see | What to fix |
 | --- | --- |
+| A white page that says **This page is unavailable** and `FUNCTION_INVOCATION_FAILED` | The function crashed before it could answer. Redeploy from the latest `main`. Opening the site or `/api/check` in a browser is not the test. After a good deploy, `/api/check` in a browser shows `Method not allowed`, and the PowerShell command below is the test. |
 | Telegram never gets the test message, and the command prints `Unauthorized` | `CRON_SECRET` in the command does not match Vercel. Update it in the Vercel project (**Settings → Environment Variables**) and redeploy. |
 | The command prints `Service unavailable` | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, or `CRON_SECRET` is missing in Vercel. Add it and redeploy. |
 | The command prints `Too many requests` | Wait for the time in the `Retry-After` header. The limit is 10 checks per hour from one network. |
