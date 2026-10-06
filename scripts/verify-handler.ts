@@ -8,7 +8,12 @@ process.env.CRON_SECRET = "test-secret";
 process.env.TELEGRAM_BOT_TOKEN = "000:test";
 process.env.TELEGRAM_CHAT_ID = "1";
 
-const { POST } = await import("../api/check.ts");
+const { GET, POST } = await import("../src/check.ts");
+
+const browser = await GET();
+if (browser.status !== 405) {
+  throw new Error(`expected 405 for a browser GET, got ${browser.status}`);
+}
 
 const missingSecret = await POST(new Request("https://checker.local/api/check", { method: "POST" }));
 if (missingSecret.status !== 401) {

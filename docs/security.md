@@ -1,6 +1,6 @@
 # Security
 
-The checker has one protected action: search Vodafone and, when the exact number first appears, message Telegram.
+The checker has one protected action: search Vodafone and, when the exact number first appears, message Telegram. `GET /api/check` returns 405 and does not search, send Telegram, or count toward the rate limit.
 
 ## Authorization
 
